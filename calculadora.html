@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calcula el pago de tu equipo de Osmosis.</title>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap');
+    
+    html, body {
+        height: 100%;
+        margin: 0;
+    }
+
+    body {
+        font-family: 'Lato', sans-serif;
+        background-color: #f0f2f5;
+        color: #495057;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start; /* Cambiado de center a flex-start */
+        padding: 15px;
+        box-sizing: border-box;
+    }
+    
+    .container {
+        width: 100%;
+        max-width: 900px;
+        background: #ffffff;
+        padding: 25px; /* Reducido padding */
+        border-radius: 12px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+        gap: 25px; /* Reducido gap */
+        box-sizing: border-box;
+        margin: 20px 0; /* Añadido margen vertical */
+    }
+
+    @media (min-width: 769px) {
+        .container {
+            flex-direction: row;
+            padding: 30px; /* Padding completo solo en desktop */
+            gap: 35px;
+        }
+    }
+
+    .loan-details, .payment-info {
+        flex: 1;
+        min-width: 0; /* Permite que se comprima en móviles */
+    }
+
+    h2 {
+        font-size: 18px; /* Tamaño reducido */
+        color: #343a40;
+        border-bottom: 1px solid #dee2e6;
+        padding-bottom: 10px;
+        margin-top: 0;
+    }
+
+    .payment-summary p {
+        margin: 8px 0;
+        font-size: 15px; /* Tamaño reducido */
+    }
+
+    .payment-summary span {
+        font-weight: 700;
+        color: #000;
+    }
+
+    .monthly-payment-display {
+        margin-bottom: 20px; /* Reducido margen */
+        text-align: center;
+    }
+
+    .monthly-payment-display p {
+        font-size: 15px; /* Tamaño reducido */
+        margin: 0 0 5px 0;
+        color: #6c757d;
+    }
+
+    .monthly-payment-display .amount {
+        font-size: 32px; /* Tamaño reducido */
+        font-weight: 700;
+        color: #2c3e50;
+    }
+    
+    .input-group {
+        margin-bottom: 18px; /* Reducido margen */
+    }
+
+    .input-group label {
+        display: flex;
+        justify-content: space-between;
+        font-size: 14px; /* Tamaño reducido */
+        margin-bottom: 8px; /* Reducido margen */
+        font-weight: 700;
+    }
+
+    .input-group .value {
+        font-weight: 400;
+        color: #3498db;
+    }
+
+    .input-display {
+        width: 100%;
+        padding: 10px; /* Reducido padding */
+        background-color: #e9ecef;
+        border: 1px solid #ced4da;
+        border-radius: 5px;
+        font-size: 15px; /* Tamaño reducido */
+        color: #495057;
+        text-align: center;
+        box-sizing: border-box;
+    }
+
+    input[type="range"] {
+        -webkit-appearance: none;
+        width: 100%;
+        height: 8px;
+        background: #dee2e6;
+        border-radius: 5px;
+        outline: none;
+        opacity: 0.9;
+        transition: opacity .2s;
+    }
+    input[type="range"]:hover {
+        opacity: 1;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 22px; /* Tamaño reducido */
+        height: 22px; /* Tamaño reducido */
+        background: #3498db;
+        cursor: pointer;
+        border-radius: 50%;
+        box-shadow: 0 0 5px rgba(0,0,0,0.2);
+    }
+    input[type="range"]::-moz-range-thumb {
+        width: 22px; /* Tamaño reducido */
+        height: 22px; /* Tamaño reducido */
+        background: #3498db;
+        cursor: pointer;
+        border-radius: 50%;
+        border: none;
+    }
+
+    .chart-container {
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        gap: 15%;
+        height: 180px; /* Altura reducida */
+        width: 100%;
+        margin-top: 15px; /* Margen reducido */
+        border-bottom: 2px solid #dee2e6;
+    }
+    .bar {
+        width: 70px; /* Ancho reducido */
+        text-align: center;
+        transition: height 0.4s ease-in-out;
+    }
+    .bar-label {
+        font-size: 12px;
+        color: #6c757d;
+        margin-top: 8px;
+    }
+    .bar-value {
+        font-size: 13px; /* Tamaño reducido */
+        font-weight: 700;
+        color: #fff;
+        background-color: rgba(0,0,0,0.2);
+        padding: 3px 0; /* Padding reducido */
+        border-top-left-radius: 4px;
+        border-top-right-radius: 4px;
+    }
+    #principal-bar {
+        background-color: #2c3e50;
+        height: 100%;
+    }
+    #interest-bar {
+        background-color: #3498db;
+        height: 50%;
+    }
+
+    /* Nuevos estilos para móviles */
+    @media (max-width: 480px) {
+        body {
+            padding: 10px; /* Padding reducido */
+            align-items: stretch; /* Ocupa todo el ancho */
+        }
+        .container {
+            padding: 15px; /* Padding reducido */
+            gap: 20px;
+        }
+        .monthly-payment-display .amount {
+            font-size: 28px; /* Tamaño reducido */
+        }
+        .chart-container {
+            height: 150px; /* Altura reducida */
+            gap: 10%; /* Espacio reducido */
+        }
+        .bar {
+            width: 60px; /* Ancho reducido */
+        }
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <div class="loan-details">
+        <h2>Detalles del Préstamo</h2>
+        <div class="monthly-payment-display">
+            <p>Pago Mensual Estimado</p>
+            <span id="monthly-payment" class="amount">$ --.--</span>
+        </div>
+        <div class="input-group">
+            <label>Monto del Equipo.</label>
+            <div class="input-display">$ 895.00</div>
+        </div>
+        <div class="input-group">
+            <label>Término (Meses) <span id="term-value" class="value">36</span></label>
+            <input type="range" id="term-months" min="12" max="72" value="36">
+        </div>
+        <div class="input-group">
+            <label>Tasa de Interés</label>
+            <div class="input-display">7.95 %</div>
+        </div>
+    </div>
+    <div class="payment-info">
+        <h2>Información de Pago Estimado</h2>
+        <div class="payment-summary">
+            <p>El cliente pagará <span id="total-payment">$ --.--</span> para alcanzar un saldo de $0.</p>
+            <p><span id="total-principal">$ --.--</span> irán al principal.</p>
+            <p><span id="total-interest">$ --.--</span> irán a intereses.</p>
+        </div>
+        <div class="chart-container">
+            <div id="principal-bar" class="bar">
+                <div id="principal-bar-value" class="bar-value">$895.00</div>
+            </div>
+            <div id="interest-bar" class="bar">
+                <div id="interest-bar-value" class="bar-value">$ --.--</div>
+            </div>
+        </div>
+         <div style="display: flex; justify-content: center; gap: 15%; margin-top: 8px;">
+             <div style="width: 70px; text-align: center;"><div class="bar-label">Principal</div></div>
+             <div style="width: 70px; text-align: center;"><div class="bar-label">Interés</div></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const loanAmount = 895.00;
+        const interestRate = 7.95 / 100;
+        const termSlider = document.getElementById('term-months');
+        const termValueDisplay = document.getElementById('term-value');
+        const monthlyPaymentDisplay = document.getElementById('monthly-payment');
+        const totalPaymentDisplay = document.getElementById('total-payment');
+        const totalPrincipalDisplay = document.getElementById('total-principal');
+        const totalInterestDisplay = document.getElementById('total-interest');
+        const principalBar = document.getElementById('principal-bar');
+        const interestBar = document.getElementById('interest-bar');
+        const principalBarValue = document.getElementById('principal-bar-value');
+        const interestBarValue = document.getElementById('interest-bar-value');
+
+        function calculateAndDisplay() {
+            const termInMonths = parseInt(termSlider.value);
+            termValueDisplay.textContent = termInMonths;
+            const monthlyInterestRate = interestRate / 12;
+            const monthlyPayment = loanAmount * (monthlyInterestRate * Math.pow(1 + monthlyInterestRate, termInMonths)) / (Math.pow(1 + monthlyInterestRate, termInMonths) - 1);
+            const totalPayment = monthlyPayment * termInMonths;
+            const totalInterest = totalPayment - loanAmount;
+            monthlyPaymentDisplay.textContent = `$ ${monthlyPayment.toFixed(2)}`;
+            totalPaymentDisplay.textContent = `$ ${totalPayment.toFixed(2)}`;
+            totalPrincipalDisplay.textContent = `$ ${loanAmount.toFixed(2)}`;
+            totalInterestDisplay.textContent = `$ ${totalInterest.toFixed(2)}`;
+            principalBarValue.textContent = `$ ${loanAmount.toFixed(2)}`;
+            interestBarValue.textContent = `$ ${totalInterest.toFixed(2)}`;
+            let principalHeight = 100;
+            let interestHeight = (totalInterest / loanAmount) * 100;
+            if (interestHeight > 100) { interestHeight = 100; }
+            principalBar.style.height = `${principalHeight}%`;
+            interestBar.style.height = `${interestHeight}%`;
+        }
+        termSlider.addEventListener('input', calculateAndDisplay);
+        calculateAndDisplay();
+    });
+</script>
+
+</body>
+</html>
